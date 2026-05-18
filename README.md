@@ -30,7 +30,7 @@ An interactive memory card matching game built with Flutter, featuring a clean a
 
 ### Clean Architecture (MVVM + Clean Architecture)
 
-```
+```text
 memory_match/lib/
 ├── layers/
 │   ├── domain/                          # Business Logic Layer
@@ -92,6 +92,26 @@ memory_match/lib/
 │           └── hud_bar.dart             # Game stats display (moves, time, pairs)
 │
 └── main.dart                            # App entry point with theme config
+
+memory_match/test/                       # Test suite mirrors lib/ structure
+├── helpers/
+│   ├── fixtures.dart                    # Shared test data (cards, sessions, raw strings)
+│   ├── mocks.dart                       # Mocktail mocks for repository, storage, use cases
+│   └── get_it_test_setup.dart           # GetIt setup/teardown for full-app tests
+├── layers/
+│   ├── domain/                          # Pure-Dart unit tests
+│   │   ├── entity/                      # MemoryCard, GameSession
+│   │   ├── constants/                   # CardConstants
+│   │   └── usecase/                     # All 8 active use cases
+│   ├── data/                            # Data-layer unit tests
+│   │   ├── source/local/                # LocalStorage (mocked SharedPreferences)
+│   │   ├── dto/                         # GameSessionDto round-trip
+│   │   └── game_repository_impl_test.dart
+│   └── presentation/                    # ViewModel + widget tests
+│       ├── main_menu/viewmodel/         # MainMenuViewModel
+│       ├── game/viewmodel/              # GameViewModel (uses fake_async for timers)
+│       └── shared/                      # GameTimerNotifier, HudBar, MenuButton, CardWidget
+└── widget_test.dart                     # App smoke test (boots MyApp)
 ```
 
 ## Architecture Explanation
@@ -220,20 +240,43 @@ flutter run
 
 ## Testing
 
+The test suite mirrors `lib/` and follows the standard Flutter testing pyramid
+(unit → widget → smoke). It uses **mocktail** for mocking and **fake_async** for
+deterministic timer control.
+
 ### Run Tests
 
 ```bash
-# Run all tests
+# Run all tests (120 tests across 21 files)
 flutter test
 
-# Run specific test file
-flutter test test/widget_test.dart
+# Run a single test file
+flutter test test/layers/domain/usecase/generate_new_game_test.dart
+
+# Run all tests under a directory
+flutter test test/layers/presentation/
+
+# Run with coverage
+flutter test --coverage
 ```
+
+### Test Organization
+
+- **`test/helpers/`** — shared fixtures, mocktail mocks, and GetIt setup utilities
+- **`test/layers/domain/`** — pure-Dart unit tests for entities, constants, and use cases
+- **`test/layers/data/`** — DTO round-trip, repository, and LocalStorage tests
+  (LocalStorage uses `SharedPreferences.setMockInitialValues({})`)
+- **`test/layers/presentation/`** — ViewModel unit tests and widget tests for
+  shared components. `GameViewModel` and `GameTimerNotifier` tests use
+  `fake_async` to advance the 1-second timer tick and 400 ms match-check delay
+  without real waits
+- **`test/widget_test.dart`** — top-level smoke test that boots `MyApp` with
+  the real GetIt graph and mocked SharedPreferences
 
 ### Static Analysis
 
 ```bash
-# Check for linting issues
+# Check for linting issues — must report 0 issues
 flutter analyze
 ```
 
@@ -597,6 +640,8 @@ All screenshots are stored in `docs/screenshots/`:
 ### Dev Dependencies
 
 - `flutter_lints`: ^6.0.0 — Default Flutter lint rules
+- `mocktail`: ^1.0.4 — Mock objects for tests (no code generation required)
+- `fake_async`: ^1.3.1 — Deterministic control of `Timer` and `Future.delayed` in tests
 
 ## Building for Release
 
@@ -651,11 +696,11 @@ flutter run
 
 ## Project Statistics
 
-- **Dart Files**: 30
-- **Lines of Code**: ~1,970
+- **Dart Files**: 30 (lib) + 24 (test)
 - **Architecture**: MVVM + Clean Architecture (3 layers)
 - **Use Cases**: 11
 - **ViewModels**: 2
+- **Tests**: 120 (unit + widget + smoke)
 
 ## License
 
