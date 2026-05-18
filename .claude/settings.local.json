@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh api *)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import sys,base64; print\\(base64.b64decode\\(sys.stdin.read\\(\\).replace\\('\\\\n',''\\)\\).decode\\(\\)\\)\")",
+      "Bash(gh repo *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('default_branch','unknown'\\)\\)\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(flutter pub *)",
+      "Bash(flutter build *)",
+      "Bash(flutter run *)"
+    ]
+  }
+}
