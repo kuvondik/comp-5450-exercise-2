@@ -6,20 +6,20 @@
     "configurations": [
         
         {
-            "name": "memory_match",
+            "name": "memory_match (debug)",
             "cwd": "memory_match",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "memory_match (profile mode)",
+            "name": "memory_match (profile)",
             "cwd": "memory_match",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "memory_match (release mode)",
+            "name": "memory_match (release)",
             "cwd": "memory_match",
             "request": "launch",
             "type": "dart",
